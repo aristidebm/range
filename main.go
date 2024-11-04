@@ -67,11 +67,11 @@ func Empty() Range {
 	return newRange(Bound{Value: math.Inf(+1), Type: LPAREN}, Bound{Value: math.Inf(-1), Type: RPAREN})
 }
 
-func OpenClosed(lower float64, upper float64) Range {
+func OpenedClosed(lower float64, upper float64) Range {
 	return newRange(Bound{Value: lower, Type: LPAREN}, Bound{Value: upper, Type: RBRACKET})
 }
 
-func ClosedOpen(lower float64, upper float64) Range {
+func ClosedOpened(lower float64, upper float64) Range {
 	return newRange(Bound{Value: lower, Type: LBRACKET}, Bound{Value: upper, Type: RPAREN})
 }
 
