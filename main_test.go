@@ -6,144 +6,52 @@ import (
 	"testing"
 )
 
-func TestFactoryMethodValue(t *testing.T) {
-	tests := []struct {
-		name     string
-		expected float64
-		actual   float64
-	}{
-		{
-			name:     "Empty Range Lower Bound",
-			expected: math.Inf(+1),
-			actual:   Empty().Lower.Value,
-		},
-		{
-			name:     "Empty Range Upper Bound",
-			expected: math.Inf(-1),
-			actual:   Empty().Upper.Value,
-		},
-		{
-			name:     "Opened Range Lower Bound",
-			expected: 10,
-			actual:   Opened(10, 20).Lower.Value,
-		},
-		{
-			name:     "Opened Range Upper Bound",
-			expected: 20,
-			actual:   Opened(10, 20).Upper.Value,
-		},
-		{
-			name:     "Closed Range Lower Bound",
-			expected: 10,
-			actual:   Closed(10, 20).Lower.Value,
-		},
-		{
-			name:     "Closed Range Upper Bound",
-			expected: 20,
-			actual:   Closed(10, 20).Upper.Value,
-		},
-		{
-			name:     "ClosedOpened Range Lower Bound",
-			expected: 10,
-			actual:   ClosedOpened(10, 20).Lower.Value,
-		},
-		{
-			name:     "ClosedOpened Range Upper Bound",
-			expected: 20,
-			actual:   ClosedOpened(10, 20).Upper.Value,
-		},
-		{
-			name:     "OpenedClosed Range Lower Bound",
-			expected: 10,
-			actual:   OpenedClosed(10, 20).Lower.Value,
-		},
-		{
-			name:     "OpenedClosed Range Upper Bound",
-			expected: 20,
-			actual:   OpenedClosed(10, 20).Upper.Value,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if tt.actual != tt.expected {
-				log.Fatalf("actual: %v; expected: %v", tt.expected, tt.actual)
-			}
-		})
-	}
-}
-
-func TestFactoryMethodType(t *testing.T) {
-	tests := []struct {
-		name     string
-		expected BoundType
-		actual   BoundType
-	}{
-		{
-			name:     "Empty Range Lower Bound",
-			expected: LPAREN,
-			actual:   Empty().Lower.Type,
-		},
-		{
-			name:     "Empty Range Upper Bound",
-			expected: RPAREN,
-			actual:   Empty().Upper.Type,
-		},
-		{
-			name:     "Opened Range Lower Bound",
-			expected: LPAREN,
-			actual:   Opened(10, 20).Lower.Type,
-		},
-		{
-			name:     "Opened Range Upper Bound",
-			expected: RPAREN,
-			actual:   Opened(10, 20).Upper.Type,
-		},
-		{
-			name:     "Closed Range Lower Bound",
-			expected: LBRACKET,
-			actual:   Closed(10, 20).Lower.Type,
-		},
-		{
-			name:     "Closed Range Upper Bound",
-			expected: RBRACKET,
-			actual:   Closed(10, 20).Upper.Type,
-		},
-		{
-			name:     "ClosedOpened Range Lower Bound",
-			expected: LBRACKET,
-			actual:   ClosedOpened(10, 20).Lower.Type,
-		},
-		{
-			name:     "ClosedOpened Range Upper Bound",
-			expected: RPAREN,
-			actual:   ClosedOpened(10, 20).Upper.Type,
-		},
-		{
-			name:     "OpenedClosed Range Lower Bound",
-			expected: LPAREN,
-			actual:   OpenedClosed(10, 20).Lower.Type,
-		},
-		{
-			name:     "OpenedClosed Range Upper Bound",
-			expected: RBRACKET,
-			actual:   OpenedClosed(10, 20).Upper.Type,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if tt.actual != tt.expected {
-				log.Fatalf("actual: %v; expected: %v", tt.expected, tt.actual)
-			}
-		})
-	}
-}
-
 func TestEqual(t *testing.T) {
 	emp1 := Empty()
 	emp2 := Empty()
 	if !emp1.Equal(emp2) {
 		log.Fatalf("actual: %v != %v; expected: %v == %v", emp1, emp2, emp1, emp2)
+	}
+}
+
+func TestFactoryMethod(t *testing.T) {
+	tests := []struct {
+		name     string
+		expected Range
+		actual   Range
+	}{
+		{
+			name:     "Empty",
+			expected: Range{Lower: Bound{Value: math.Inf(+1), Type: LPAREN}, Upper: Bound{Value: math.Inf(-1), Type: RPAREN}},
+			actual:   Empty(),
+		},
+		{
+			name:     "Opened",
+			expected: Range{Lower: Bound{Value: 10, Type: LPAREN}, Upper: Bound{Value: 20, Type: RPAREN}},
+			actual:   Opened(10, 20),
+		},
+		{
+			name:     "Closed",
+			expected: Range{Lower: Bound{Value: 10, Type: LBRACKET}, Upper: Bound{Value: 20, Type: RBRACKET}},
+			actual:   Closed(10, 20),
+		},
+		{
+			name:     "ClosedOpened",
+			expected: Range{Lower: Bound{Value: 10, Type: LBRACKET}, Upper: Bound{Value: 20, Type: RPAREN}},
+			actual:   ClosedOpened(10, 20),
+		},
+		{
+			name:     "OpenedClosed",
+			expected: Range{Lower: Bound{Value: 10, Type: LPAREN}, Upper: Bound{Value: 20, Type: RBRACKET}},
+			actual:   OpenedClosed(10, 20),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if !tt.actual.Equal(tt.expected) {
+				log.Fatalf("actual: %v; expected: %v", tt.expected, tt.actual)
+			}
+		})
 	}
 }

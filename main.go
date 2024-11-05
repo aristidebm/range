@@ -19,6 +19,10 @@ type Bound struct {
 	Type  BoundType
 }
 
+func (b Bound) Equal(other Bound) bool {
+	return b.Value == other.Value && b.Type == other.Type
+}
+
 type Range struct {
 	Lower Bound
 	Upper Bound
@@ -40,39 +44,68 @@ func (r Range) Belongs(other Range) bool {
 }
 
 func (r Range) Equal(other Range) bool {
-
-	if r.Lower.Value != other.Lower.Value {
-		return false
-	}
-
-	if r.Lower.Type != other.Lower.Type {
-		return false
-	}
-
-	if r.Upper.Value != other.Upper.Value {
-		return false
-	}
-
-	if r.Upper.Type != other.Upper.Type {
-		return false
-	}
-
-	return true
+	return r.Lower.Equal(other.Lower) && r.Upper.Equal(other.Upper)
 }
 
 func (r Range) IsEmpty() bool {
-	return true
+	return r.Lower.Value == math.Inf(+1) &&
+		r.Lower.Type == LPAREN &&
+		r.Upper.Value == math.Inf(-1) &&
+		r.Upper.Type == RPAREN
 }
 
 func (r Range) Difference(other Range) Range {
+	if other.IsEmpty() {
+		// structs are passed by value, no need to clone
+		return other
+	}
 	return Range{}
 }
 
 func (r Range) Intersection(other Range) Range {
-	return Range{}
+	switch {
+	case other.IsEmpty() || r.Contains(other):
+		return other
+	case r.IsEmpty() || other.Contains(r):
+		return r
+	case r.Equal(other):
+		return r
+	default:
+		return r.intersection(other)
+	}
+}
+
+func (r Range) intersection(other Range) Range {
+	switch {
+	// They are disjoints
+	case other.Lower.Value < r.Lower.Value && other.Upper.Value < r.Lower.Value:
+		return Empty()
+	case r.Lower.Value < other.Lower.Value && r.Upper.Value < other.Lower.Value:
+		return Empty()
+	default:
+		lower := Bound{Value: math.Max(r.Lower.Value, other.Lower.Value)}
+		upper := Bound{Value: math.Min(r.Upper.Value, other.Upper.Value)}
+
+		if lower.Value == r.Lower.Value {
+			lower.Type = r.Lower.Type
+		} else {
+			lower.Type = other.Lower.Type
+		}
+
+		if upper.Value == r.Upper.Value {
+			upper.Type = r.Upper.Type
+		} else {
+			upper.Type = other.Upper.Type
+		}
+		return newRange(lower, upper)
+	}
 }
 
 func (r Range) Union(other Range) Range {
+	if other.IsEmpty() {
+		// structs are passed by value, no need to clone
+		return r
+	}
 	return Range{}
 }
 
@@ -104,9 +137,4 @@ func newRange(lower Bound, upper Bound) Range {
 	return Range{
 		Lower: lower, Upper: upper,
 	}
-}
-
-func main() {
-	emp := Empty()
-	fmt.Printf("%s", emp)
 }
