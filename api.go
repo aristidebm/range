@@ -1,30 +1,10 @@
 package ranges
 
 import (
+	"example.com/ranges/internal/utils"
 	"fmt"
 	"math"
-    "example.com/ranges/internal/utils"
 )
-
-type interval struct {
-	Lower utils.Bound
-	Upper utils.Bound
-}
-
-func newInterval(lower utils.Bound, upper utils.Bound) interval {
-	if (lower.Value > upper.Value) ||
-		(lower.Value == upper.Value && lower.Type != upper.Type) ||
-		(lower.Value == upper.Value && lower.Type == utils.LPAREN) ||
-		(lower.Type != utils.LPAREN && lower.Type != utils.LBRACKET) ||
-		(upper.Type != utils.RPAREN && upper.Type != utils.RBRACKET) {
-		return emptyInterval()
-	}
-	return interval{Lower: lower, Upper: upper}
-}
-
-func emptyInterval() interval {
-	return interval{Lower: utils.Bound{Value: math.Inf(+1), Type: utils.LPAREN}, Upper: utils.Bound{Value: math.Inf(-1), Type: utils.RPAREN}}
-}
 
 func (r interval) Contains(other interval) bool {
 	if other.IsEmpty() {
@@ -166,4 +146,24 @@ func (r interval) String() string {
 		return fmt.Sprintf("%s%s", utils.LPAREN, utils.RPAREN)
 	}
 	return fmt.Sprintf("%v%v,%v%v", r.Lower.Type, r.Lower.Value, r.Upper.Value, r.Upper.Type)
+}
+
+type interval struct {
+	Lower utils.Bound
+	Upper utils.Bound
+}
+
+func newInterval(lower utils.Bound, upper utils.Bound) interval {
+	if (lower.Value > upper.Value) ||
+		(lower.Value == upper.Value && lower.Type != upper.Type) ||
+		(lower.Value == upper.Value && lower.Type == utils.LPAREN) ||
+		(lower.Type != utils.LPAREN && lower.Type != utils.LBRACKET) ||
+		(upper.Type != utils.RPAREN && upper.Type != utils.RBRACKET) {
+		return emptyInterval()
+	}
+	return interval{Lower: lower, Upper: upper}
+}
+
+func emptyInterval() interval {
+	return interval{Lower: utils.Bound{Value: math.Inf(+1), Type: utils.LPAREN}, Upper: utils.Bound{Value: math.Inf(-1), Type: utils.RPAREN}}
 }

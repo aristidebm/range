@@ -1,13 +1,13 @@
 package main
 
 import (
-    "fmt"
-    "example.com/ranges"
+	"example.com/ranges"
+	"fmt"
 )
 
 func main() {
-    empty := ranges.Empty()
-    interval1 := ranges.Opened(10, 20)
-    interval2 := empty.Intersection(interval1)
-    fmt.Print(empty.Equal(interval2))
+	empty := ranges.Empty()
+	interval1 := ranges.Opened(10, 20)
+	interval2 := empty.Intersection(interval1)
+	fmt.Print(empty.Equal(interval2))
 }

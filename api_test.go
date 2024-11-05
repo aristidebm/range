@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-    "example.com/ranges/internal/utils"
+	"example.com/ranges/internal/utils"
 )
 
 type TableEntry struct {
