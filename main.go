@@ -39,7 +39,24 @@ func (r Range) Belongs(other Range) bool {
 	return true
 }
 
-func (r Range) Equal() bool {
+func (r Range) Equal(other Range) bool {
+
+	if r.Lower.Value != other.Lower.Value {
+		return false
+	}
+
+	if r.Lower.Type != other.Lower.Type {
+		return false
+	}
+
+	if r.Upper.Value != other.Upper.Value {
+		return false
+	}
+
+	if r.Upper.Type != other.Upper.Type {
+		return false
+	}
+
 	return true
 }
 
@@ -87,4 +104,9 @@ func newRange(lower Bound, upper Bound) Range {
 	return Range{
 		Lower: lower, Upper: upper,
 	}
+}
+
+func main() {
+	emp := Empty()
+	fmt.Printf("%s", emp)
 }

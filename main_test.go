@@ -139,3 +139,11 @@ func TestFactoryMethodType(t *testing.T) {
 		})
 	}
 }
+
+func TestEqual(t *testing.T) {
+	emp1 := Empty()
+	emp2 := Empty()
+	if !emp1.Equal(emp2) {
+		log.Fatalf("actual: %v != %v; expected: %v == %v", emp1, emp2, emp1, emp2)
+	}
+}
