@@ -10,26 +10,26 @@ func (r interval) Contains(other interval) bool {
 	if other.IsEmpty() {
 		return true
 	}
-	return r.Lower.Value <= other.Lower.Value &&
-		other.Lower.Value <= other.Upper.Value &&
-		other.Upper.Value <= r.Lower.Value
+	return r.lower.Value <= other.lower.Value &&
+		other.lower.Value <= other.upper.Value &&
+		other.upper.Value <= r.lower.Value
 }
 
 func (r interval) Belongs(other interval) bool {
-	return other.Lower.Value <= r.Lower.Value &&
-		r.Lower.Value <= r.Upper.Value &&
-		r.Upper.Value <= other.Lower.Value
+	return other.lower.Value <= r.lower.Value &&
+		r.lower.Value <= r.upper.Value &&
+		r.upper.Value <= other.lower.Value
 }
 
 func (r interval) Equal(other interval) bool {
-	return r.Lower.Equal(other.Lower) && r.Upper.Equal(other.Upper)
+	return r.lower.Equal(other.lower) && r.upper.Equal(other.upper)
 }
 
 func (r interval) IsEmpty() bool {
-	return r.Lower.Value == math.Inf(+1) &&
-		r.Lower.Type == utils.LPAREN &&
-		r.Upper.Value == math.Inf(-1) &&
-		r.Upper.Type == utils.RPAREN
+	return r.lower.Value == math.Inf(+1) &&
+		r.lower.Type == utils.LPAREN &&
+		r.upper.Value == math.Inf(-1) &&
+		r.upper.Type == utils.RPAREN
 }
 
 func (r interval) Difference(other interval) interval {
@@ -55,24 +55,24 @@ func (r interval) Intersection(other interval) interval {
 func (r interval) intersection(other interval) interval {
 	switch {
 	// disjoin
-	case other.Lower.Value < r.Lower.Value && other.Upper.Value < r.Lower.Value:
+	case other.lower.Value < r.lower.Value && other.upper.Value < r.lower.Value:
 		return Empty()
-	case r.Lower.Value < other.Lower.Value && r.Upper.Value < other.Lower.Value:
+	case r.lower.Value < other.lower.Value && r.upper.Value < other.lower.Value:
 		return Empty()
 	default:
-		lower := utils.Bound{Value: math.Max(r.Lower.Value, other.Lower.Value)}
-		upper := utils.Bound{Value: math.Min(r.Upper.Value, other.Upper.Value)}
+		lower := utils.Bound{Value: math.Max(r.lower.Value, other.lower.Value)}
+		upper := utils.Bound{Value: math.Min(r.upper.Value, other.upper.Value)}
 
-		if lower.Value == r.Lower.Value {
-			lower.Type = r.Lower.Type
+		if lower.Value == r.lower.Value {
+			lower.Type = r.lower.Type
 		} else {
-			lower.Type = other.Lower.Type
+			lower.Type = other.lower.Type
 		}
 
-		if upper.Value == r.Upper.Value {
-			upper.Type = r.Upper.Type
+		if upper.Value == r.upper.Value {
+			upper.Type = r.upper.Type
 		} else {
-			upper.Type = other.Upper.Type
+			upper.Type = other.upper.Type
 		}
 		return newInterval(lower, upper)
 	}
@@ -94,24 +94,24 @@ func (r interval) Union(other interval) interval {
 func (r interval) union(other interval) interval {
 	switch {
 	// disjoin (by convention, we will consider union of disjoin range to be empty)
-	case other.Lower.Value < r.Lower.Value && other.Upper.Value < r.Lower.Value:
+	case other.lower.Value < r.lower.Value && other.upper.Value < r.lower.Value:
 		return Empty()
-	case r.Lower.Value < other.Lower.Value && r.Upper.Value < other.Lower.Value:
+	case r.lower.Value < other.lower.Value && r.upper.Value < other.lower.Value:
 		return Empty()
 	default:
-		lower := utils.Bound{Value: math.Min(r.Lower.Value, other.Lower.Value)}
-		upper := utils.Bound{Value: math.Max(r.Upper.Value, other.Upper.Value)}
+		lower := utils.Bound{Value: math.Min(r.lower.Value, other.lower.Value)}
+		upper := utils.Bound{Value: math.Max(r.upper.Value, other.upper.Value)}
 
-		if lower.Value == r.Lower.Value {
-			lower.Type = r.Lower.Type
+		if lower.Value == r.lower.Value {
+			lower.Type = r.lower.Type
 		} else {
-			lower.Type = other.Lower.Type
+			lower.Type = other.lower.Type
 		}
 
-		if upper.Value == r.Upper.Value {
-			upper.Type = r.Upper.Type
+		if upper.Value == r.upper.Value {
+			upper.Type = r.upper.Type
 		} else {
-			upper.Type = other.Upper.Type
+			upper.Type = other.upper.Type
 		}
 		return newInterval(lower, upper)
 	}
@@ -145,12 +145,20 @@ func (r interval) String() string {
 	if r.IsEmpty() {
 		return fmt.Sprintf("%s%s", utils.LPAREN, utils.RPAREN)
 	}
-	return fmt.Sprintf("%v%v,%v%v", r.Lower.Type, r.Lower.Value, r.Upper.Value, r.Upper.Type)
+	return fmt.Sprintf("%v%v,%v%v", r.lower.Type, r.lower.Value, r.upper.Value, r.upper.Type)
 }
 
 type interval struct {
-	Lower utils.Bound
-	Upper utils.Bound
+	lower utils.Bound
+	upper utils.Bound
+}
+
+func (r interval) Lower() utils.Bound {
+	return r.lower
+}
+
+func (r interval) Upper() utils.Bound {
+	return r.upper
 }
 
 func newInterval(lower utils.Bound, upper utils.Bound) interval {
@@ -161,9 +169,9 @@ func newInterval(lower utils.Bound, upper utils.Bound) interval {
 		(upper.Type != utils.RPAREN && upper.Type != utils.RBRACKET) {
 		return emptyInterval()
 	}
-	return interval{Lower: lower, Upper: upper}
+	return interval{lower: lower, upper: upper}
 }
 
 func emptyInterval() interval {
-	return interval{Lower: utils.Bound{Value: math.Inf(+1), Type: utils.LPAREN}, Upper: utils.Bound{Value: math.Inf(-1), Type: utils.RPAREN}}
+	return interval{lower: utils.Bound{Value: math.Inf(+1), Type: utils.LPAREN}, upper: utils.Bound{Value: math.Inf(-1), Type: utils.RPAREN}}
 }

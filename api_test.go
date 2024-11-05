@@ -26,27 +26,27 @@ func TestFactoryMethod(t *testing.T) {
 	table := []TableEntry{
 		{
 			name:     "Empty",
-			expected: interval{Lower: utils.Bound{Value: math.Inf(+1), Type: utils.LPAREN}, Upper: utils.Bound{Value: math.Inf(-1), Type: utils.RPAREN}},
+			expected: interval{lower: utils.Bound{Value: math.Inf(+1), Type: utils.LPAREN}, upper: utils.Bound{Value: math.Inf(-1), Type: utils.RPAREN}},
 			actual:   Empty(),
 		},
 		{
 			name:     "Opened",
-			expected: interval{Lower: utils.Bound{Value: 10, Type: utils.LPAREN}, Upper: utils.Bound{Value: 20, Type: utils.RPAREN}},
+			expected: interval{lower: utils.Bound{Value: 10, Type: utils.LPAREN}, upper: utils.Bound{Value: 20, Type: utils.RPAREN}},
 			actual:   Opened(10, 20),
 		},
 		{
 			name:     "Closed",
-			expected: interval{Lower: utils.Bound{Value: 10, Type: utils.LBRACKET}, Upper: utils.Bound{Value: 20, Type: utils.RBRACKET}},
+			expected: interval{lower: utils.Bound{Value: 10, Type: utils.LBRACKET}, upper: utils.Bound{Value: 20, Type: utils.RBRACKET}},
 			actual:   Closed(10, 20),
 		},
 		{
 			name:     "ClosedOpened",
-			expected: interval{Lower: utils.Bound{Value: 10, Type: utils.LBRACKET}, Upper: utils.Bound{Value: 20, Type: utils.RPAREN}},
+			expected: interval{lower: utils.Bound{Value: 10, Type: utils.LBRACKET}, upper: utils.Bound{Value: 20, Type: utils.RPAREN}},
 			actual:   ClosedOpened(10, 20),
 		},
 		{
 			name:     "OpenedClosed",
-			expected: interval{Lower: utils.Bound{Value: 10, Type: utils.LPAREN}, Upper: utils.Bound{Value: 20, Type: utils.RBRACKET}},
+			expected: interval{lower: utils.Bound{Value: 10, Type: utils.LPAREN}, upper: utils.Bound{Value: 20, Type: utils.RBRACKET}},
 			actual:   OpenedClosed(10, 20),
 		},
 	}
@@ -56,7 +56,7 @@ func TestFactoryMethod(t *testing.T) {
 func TestInvalidBounds(t *testing.T) {
 	table := []TableEntry{
 		{
-			name:     "Lowerutils.BoundGreatherThanUpperutils.Bound",
+			name:     "lowerutils.BoundGreatherThanupperutils.Bound",
 			expected: Empty(),
 			actual:   OpenedClosed(20, 10),
 		},
