@@ -1,3 +1,3 @@
-module example.com/range
+module example.com/ranges
 
 go 1.23.0

@@ -3,10 +3,10 @@
 Range is just a datastructure that let you manipulate intervals or ranges and performs operation between ranges
 
 ```go
-def main() {
+func main() {
     empty := ranges.Empty()
     interval1 := ranges.Opened(10, 20)
-    interval2 := empty.Intersection(interval)
+    interval2 := empty.Intersection(interval1)
     fmt.Print(empty.Equal(interval2))
 }
 ```

@@ -1,15 +1,17 @@
-package main
+package ranges
 
 import (
 	"log"
 	"math"
 	"testing"
+
+    "example.com/ranges/internal/utils"
 )
 
 type TableEntry struct {
 	name     string
-	expected Range
-	actual   Range
+	expected interval
+	actual   interval
 }
 
 func TestEqual(t *testing.T) {
@@ -24,27 +26,27 @@ func TestFactoryMethod(t *testing.T) {
 	table := []TableEntry{
 		{
 			name:     "Empty",
-			expected: Range{Lower: Bound{Value: math.Inf(+1), Type: LPAREN}, Upper: Bound{Value: math.Inf(-1), Type: RPAREN}},
+			expected: interval{Lower: utils.Bound{Value: math.Inf(+1), Type: utils.LPAREN}, Upper: utils.Bound{Value: math.Inf(-1), Type: utils.RPAREN}},
 			actual:   Empty(),
 		},
 		{
 			name:     "Opened",
-			expected: Range{Lower: Bound{Value: 10, Type: LPAREN}, Upper: Bound{Value: 20, Type: RPAREN}},
+			expected: interval{Lower: utils.Bound{Value: 10, Type: utils.LPAREN}, Upper: utils.Bound{Value: 20, Type: utils.RPAREN}},
 			actual:   Opened(10, 20),
 		},
 		{
 			name:     "Closed",
-			expected: Range{Lower: Bound{Value: 10, Type: LBRACKET}, Upper: Bound{Value: 20, Type: RBRACKET}},
+			expected: interval{Lower: utils.Bound{Value: 10, Type: utils.LBRACKET}, Upper: utils.Bound{Value: 20, Type: utils.RBRACKET}},
 			actual:   Closed(10, 20),
 		},
 		{
 			name:     "ClosedOpened",
-			expected: Range{Lower: Bound{Value: 10, Type: LBRACKET}, Upper: Bound{Value: 20, Type: RPAREN}},
+			expected: interval{Lower: utils.Bound{Value: 10, Type: utils.LBRACKET}, Upper: utils.Bound{Value: 20, Type: utils.RPAREN}},
 			actual:   ClosedOpened(10, 20),
 		},
 		{
 			name:     "OpenedClosed",
-			expected: Range{Lower: Bound{Value: 10, Type: LPAREN}, Upper: Bound{Value: 20, Type: RBRACKET}},
+			expected: interval{Lower: utils.Bound{Value: 10, Type: utils.LPAREN}, Upper: utils.Bound{Value: 20, Type: utils.RBRACKET}},
 			actual:   OpenedClosed(10, 20),
 		},
 	}
@@ -54,7 +56,7 @@ func TestFactoryMethod(t *testing.T) {
 func TestInvalidBounds(t *testing.T) {
 	table := []TableEntry{
 		{
-			name:     "LowerBoundGreatherThanUpperBound",
+			name:     "Lowerutils.BoundGreatherThanUpperutils.Bound",
 			expected: Empty(),
 			actual:   OpenedClosed(20, 10),
 		},
