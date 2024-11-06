@@ -3,6 +3,7 @@ package ranges
 import (
 	"example.com/ranges/internal/utils"
 	"fmt"
+	"iter"
 	"math"
 )
 
@@ -117,8 +118,29 @@ func (r interval) union(other interval) interval {
 	}
 }
 
-func (r interval) Iter(step float64) float64 {
-	return 0
+func (r interval) Iter(step float64) iter.Seq[float64] {
+	v := r.lower.Value
+	if r.lower.Type == utils.LPAREN {
+		v = v + step
+	}
+	includeUpper := r.upper.Type == utils.RBRACKET
+	return func(yield func(v float64) bool) {
+		for {
+			if !yield(v) {
+				return
+			}
+
+			v = v + step
+
+			if v > r.upper.Value {
+				break
+			}
+
+			if v == r.upper.Value && !includeUpper {
+				break
+			}
+		}
+	}
 }
 
 func Empty() interval {
